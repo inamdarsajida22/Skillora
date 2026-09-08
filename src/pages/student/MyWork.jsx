@@ -1,6 +1,15 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import DashboardLayout from "../../components/DashboardLayout";
 
 function MyWork() {
+  const [progress, setProgress] = useState(65);
+
+  const updateProgress = () => {
+    if (progress < 100) {
+      setProgress(progress + 10);
+    }
+  };
 
   return (
     <DashboardLayout>
@@ -14,36 +23,92 @@ function MyWork() {
 
       <div className="work-grid">
 
+        {/* ================= ACTIVE PROJECT ================= */}
         <div className="work-card">
-          <span className="work-status">In Progress</span>
-          <h2>E-commerce Website</h2>
-          <p>Client: TechNova</p>
 
+          <span className="work-status">
+            In Progress
+          </span>
+
+          <h2>E-commerce Website</h2>
+
+          <p>
+            Client: TechNova
+          </p>
+
+          {/* Progress */}
           <div className="progress">
-            <div></div>
+            <div
+              style={{ width: `${progress}%` }}
+            ></div>
           </div>
 
-          <small>65% completed</small>
+          <small>
+            {progress}% completed
+          </small>
 
-          <button className="primary-btn">
-            Open Workspace →
-          </button>
+          {/* Actions */}
+          <div className="project-actions">
+
+            <button
+              className="primary-btn"
+              onClick={updateProgress}
+            >
+              ⚙️ Update Progress
+            </button>
+
+            <Link
+              to="/student/messages"
+              className="outline-btn"
+            >
+              💬 Message Client
+            </Link>
+
+          </div>
+
         </div>
 
+
+        {/* ================= COMPLETED PROJECT ================= */}
         <div className="work-card">
-          <span className="completed">Completed</span>
+
+          <span className="completed">
+            Completed
+          </span>
+
           <h2>Social Media Design</h2>
-          <p>Client: Brandify</p>
+
+          <p>
+            Client: Brandify
+          </p>
 
           <div className="progress complete">
             <div></div>
           </div>
 
-          <small>100% completed</small>
+          <small>
+            100% completed
+          </small>
 
-          <button className="outline-btn">
-            View Project
-          </button>
+          {/* Actions */}
+          <div className="project-actions">
+
+            <Link
+              to="/student/projects/view/Social%20Media%20Design"
+              className="outline-btn"
+            >
+              👁 View Project
+            </Link>
+
+            <Link
+              to="/student/messages"
+              className="outline-btn"
+            >
+              💬 Message Client
+            </Link>
+
+          </div>
+
         </div>
 
       </div>

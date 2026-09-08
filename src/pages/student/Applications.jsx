@@ -1,4 +1,5 @@
 import DashboardLayout from "../../components/DashboardLayout";
+import { Link } from "react-router-dom";
 
 function Applications() {
 
@@ -22,20 +23,29 @@ function Applications() {
 
         {applications.map((item, index) => (
 
-          <div className="application-row" key={index}>
+          <div
+            className="application-row"
+            key={index}
+          >
 
+            {/* Project */}
             <div>
               <b>{item[0]}</b>
               <small>{item[1]}</small>
             </div>
 
+            {/* Status */}
             <span className={`status status-${index}`}>
               {item[2]}
             </span>
 
-            <button className="small-btn">
-              View
-            </button>
+            {/* View Application */}
+            <Link
+              to={`/student/applications/view/${encodeURIComponent(item[0])}`}
+              className="small-btn"
+            >
+              👁 View
+            </Link>
 
           </div>
 

@@ -3,18 +3,33 @@ import DashboardLayout from "../../components/DashboardLayout";
 
 function Messages() {
 
+  const [selectedChat, setSelectedChat] = useState("TechNova");
   const [message, setMessage] = useState("");
 
-  const [messages, setMessages] = useState([
-    {
-      text: "Hi! Can you share the project update?",
-      type: "received"
-    },
-    {
-      text: "Sure! I'll send it today 👍",
-      type: "sent"
-    }
-  ]);
+  const [chatMessages, setChatMessages] = useState({
+    TechNova: [
+      {
+        text: "Hi! Can you share the project update?",
+        type: "received"
+      },
+      {
+        text: "Sure! I'll send it today 👍",
+        type: "sent"
+      }
+    ],
+
+    Brandify: [
+      {
+        text: "Hello! We would like to discuss the design project.",
+        type: "received"
+      },
+      {
+        text: "Sure! I am available for the discussion.",
+        type: "sent"
+      }
+    ]
+  });
+
 
   const sendMessage = () => {
 
@@ -22,16 +37,20 @@ function Messages() {
       return;
     }
 
-    setMessages([
-      ...messages,
-      {
-        text: message,
-        type: "sent"
-      }
-    ]);
+    setChatMessages({
+      ...chatMessages,
+      [selectedChat]: [
+        ...chatMessages[selectedChat],
+        {
+          text: message,
+          type: "sent"
+        }
+      ]
+    });
 
     setMessage("");
   };
+
 
   const handleKeyDown = (e) => {
 
@@ -41,6 +60,13 @@ function Messages() {
 
   };
 
+
+  const selectChat = (chat) => {
+    setSelectedChat(chat);
+    setMessage("");
+  };
+
+
   return (
     <DashboardLayout>
 
@@ -48,10 +74,11 @@ function Messages() {
 
         <div>
           <h1>Messages 💬</h1>
-          <p>Connect with clients.</p>
+          <p>Connect with clients and discuss your projects.</p>
         </div>
 
       </div>
+
 
       <div className="messages-box">
 
@@ -59,14 +86,35 @@ function Messages() {
 
         <div className="chat-list">
 
-          <div className="chat-user active-chat">
+          <div
+            className={`chat-user ${
+              selectedChat === "TechNova"
+                ? "active-chat"
+                : ""
+            }`}
+            onClick={() => selectChat("TechNova")}
+          >
             🏢 TechNova
-            <small>Can you share the update?</small>
+
+            <small>
+              Can you share the update?
+            </small>
           </div>
 
-          <div className="chat-user">
+
+          <div
+            className={`chat-user ${
+              selectedChat === "Brandify"
+                ? "active-chat"
+                : ""
+            }`}
+            onClick={() => selectChat("Brandify")}
+          >
             🎨 Brandify
-            <small>Project discussion</small>
+
+            <small>
+              Project discussion
+            </small>
           </div>
 
         </div>
@@ -76,22 +124,29 @@ function Messages() {
 
         <div className="chat-area">
 
-          <h3>🏢 TechNova</h3>
+          <h3>
+            {selectedChat === "TechNova"
+              ? "🏢 TechNova"
+              : "🎨 Brandify"}
+          </h3>
+
 
           {/* MESSAGES */}
 
           <div className="messages-container">
 
-            {messages.map((msg, index) => (
+            {chatMessages[selectedChat].map(
+              (msg, index) => (
 
-              <div
-                key={index}
-                className={`message ${msg.type}`}
-              >
-                {msg.text}
-              </div>
+                <div
+                  key={index}
+                  className={`message ${msg.type}`}
+                >
+                  {msg.text}
+                </div>
 
-            ))}
+              )
+            )}
 
           </div>
 
@@ -102,9 +157,11 @@ function Messages() {
 
             <input
               type="text"
-              placeholder="Type a message..."
+              placeholder={`Message ${selectedChat}...`}
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={(e) =>
+                setMessage(e.target.value)
+              }
               onKeyDown={handleKeyDown}
             />
 

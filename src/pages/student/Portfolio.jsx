@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import DashboardLayout from "../../components/DashboardLayout";
 
 function Portfolio() {
@@ -10,11 +11,22 @@ function Portfolio() {
   ]);
 
   const addProject = () => {
-
     const name = prompt("Enter project name");
 
-    if (name) {
-      setProjects([...projects, name]);
+    if (name && name.trim()) {
+      setProjects([...projects, name.trim()]);
+    }
+  };
+
+  const deleteProject = (index) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this project?"
+    );
+
+    if (confirmDelete) {
+      setProjects(
+        projects.filter((_, i) => i !== index)
+      );
     }
   };
 
@@ -25,7 +37,9 @@ function Portfolio() {
 
         <div>
           <h1>My Portfolio 📁</h1>
-          <p>Showcase your best work to clients.</p>
+          <p>
+            Showcase your best work to clients.
+          </p>
         </div>
 
         <button
@@ -37,30 +51,77 @@ function Portfolio() {
 
       </div>
 
+
       <div className="portfolio-grid">
 
         {projects.map((project, index) => (
 
-          <div className="portfolio-card" key={index}>
+          <div
+            className="portfolio-card"
+            key={index}
+          >
 
+            {/* Project Image */}
             <div className="portfolio-image">
               💻
             </div>
 
+
+            {/* Project Information */}
             <div>
               <h3>{project}</h3>
-              <p>Web Development</p>
+
+              <p>
+                Web Development
+              </p>
             </div>
 
-            <button className="small-btn">
-              View Project
-            </button>
+
+            {/* Buttons */}
+            <div className="project-actions">
+
+              <Link
+                to={`/student/projects/view/${encodeURIComponent(project)}`}
+                className="small-btn"
+              >
+                👁 View Project
+              </Link>
+
+              <button
+                className="small-btn"
+                onClick={() => deleteProject(index)}
+              >
+                🗑 Delete
+              </button>
+
+            </div>
 
           </div>
 
         ))}
 
       </div>
+
+
+      {/* Empty Portfolio */}
+      {projects.length === 0 && (
+        <div className="empty-state">
+
+          <h2>📁 Your portfolio is empty</h2>
+
+          <p>
+            Add your first project to showcase your skills.
+          </p>
+
+          <button
+            className="primary-btn"
+            onClick={addProject}
+          >
+            + Add Your First Project
+          </button>
+
+        </div>
+      )}
 
     </DashboardLayout>
   );

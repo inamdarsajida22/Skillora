@@ -3,52 +3,65 @@ import DashboardLayout from "../../components/DashboardLayout";
 import ProjectCard from "../../components/ProjectCard";
 
 function StudentDashboard() {
-
   return (
     <DashboardLayout>
 
+      {/* ================= HEADER ================= */}
       <div className="page-header">
 
         <div>
           <p className="welcome">GOOD MORNING 👋</p>
+
           <h1>Welcome back, Student!</h1>
-          <p>Here are opportunities matching your skills.</p>
+
+          <p>
+            Here are opportunities matching your skills.
+          </p>
         </div>
 
-        <div className="notification">
+        {/* Notifications */}
+        <Link
+          to="/student/messages"
+          className="notification"
+          title="Open Messages"
+        >
           🔔 <span>3</span>
-        </div>
+        </Link>
 
       </div>
 
+
+      {/* ================= STATS ================= */}
       <div className="dashboard-stats">
 
-        <div>
+        <Link to="/student/profile">
           <span>🎯</span>
           <b>92%</b>
           <small>Profile Complete</small>
-        </div>
+        </Link>
 
-        <div>
+        <Link to="/student/applications">
           <span>📩</span>
           <b>8</b>
           <small>Applications</small>
-        </div>
+        </Link>
 
-        <div>
+        <Link to="/student/work">
           <span>💼</span>
           <b>3</b>
           <small>Active Work</small>
-        </div>
+        </Link>
 
-        <div>
+        <Link to="/student/reviews">
           <span>⭐</span>
           <b>4.8</b>
           <small>Rating</small>
-        </div>
+        </Link>
 
       </div>
 
+
+      {/* ================= QUICK ACTIONS ================= */}
       <div className="quick-actions">
 
         <Link to="/student/projects">
@@ -69,17 +82,26 @@ function StudentDashboard() {
 
       </div>
 
+
+      {/* ================= RECOMMENDED PROJECTS ================= */}
       <div className="section-heading">
+
         <div>
           <h2>Recommended Projects</h2>
-          <p>Based on your skills</p>
+
+          <p>
+            Based on your skills
+          </p>
         </div>
 
         <Link to="/student/projects">
           View All →
         </Link>
+
       </div>
 
+
+      {/* ================= PROJECT CARDS ================= */}
       <div className="project-grid">
 
         <ProjectCard
