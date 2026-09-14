@@ -3106,3 +3106,794 @@ a {
   }
 
 }
+/* =====================================================
+   FIND STUDENTS
+===================================================== */
+
+.search-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  max-width: 700px;
+
+  margin: 25px 0;
+
+  padding: 0 16px;
+
+  height: 52px;
+
+  background: white;
+
+  border: 1px solid #e3e0eb;
+
+  border-radius: 12px;
+
+  box-shadow: 0 5px 18px rgba(30, 20, 70, 0.05);
+}
+
+.search-area > span {
+  font-size: 18px;
+}
+
+.search-area input {
+  flex: 1;
+
+  height: 100%;
+
+  border: none;
+
+  outline: none;
+
+  font-size: 14px;
+
+  background: transparent;
+}
+
+.clear-search {
+  border: none;
+
+  background: transparent;
+
+  color: #777;
+
+  cursor: pointer;
+
+  font-size: 15px;
+}
+
+
+/* RESULT HEADER */
+
+.student-result-info {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin: 30px 0 18px;
+}
+
+.student-result-info h2 {
+  margin: 0;
+
+  font-size: 20px;
+}
+
+.student-result-info span {
+  color: #777;
+
+  font-size: 13px;
+}
+
+
+/* GRID */
+
+.student-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 20px;
+}
+
+
+/* CARD */
+
+.student-card {
+  padding: 22px;
+
+  background: white;
+
+  border: 1px solid #e8e5f0;
+
+  border-radius: 16px;
+
+  box-shadow: 0 8px 25px rgba(30, 20, 70, 0.06);
+
+  transition: 0.25s;
+}
+
+.student-card:hover {
+  transform: translateY(-4px);
+
+  box-shadow: 0 14px 35px rgba(30, 20, 70, 0.10);
+}
+
+
+/* TOP */
+
+.student-card-top {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin-bottom: 16px;
+}
+
+.student-avatar {
+  width: 55px;
+  height: 55px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 14px;
+
+  background: #f0ebff;
+
+  font-size: 27px;
+}
+
+.student-rating {
+  padding: 6px 9px;
+
+  border-radius: 20px;
+
+  background: #fff8df;
+
+  color: #7c6200;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+.student-card h3 {
+  margin: 0 0 7px;
+
+  font-size: 18px;
+}
+
+.student-skills {
+  margin: 0 0 16px;
+
+  color: #704cff;
+
+  font-size: 13px;
+
+  font-weight: 600;
+}
+
+
+/* MINI INFO */
+
+.student-mini-info {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 7px;
+
+  margin-bottom: 18px;
+
+  padding-top: 14px;
+
+  border-top: 1px solid #eee;
+}
+
+.student-mini-info span {
+  color: #777;
+
+  font-size: 11px;
+}
+
+
+/* ACTIONS */
+
+.student-actions {
+  display: flex;
+
+  gap: 9px;
+}
+
+.student-actions .outline-btn,
+.student-actions .primary-btn {
+  flex: 1;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-height: 43px;
+
+  box-sizing: border-box;
+
+  text-decoration: none;
+
+  cursor: pointer;
+}
+
+.student-actions .outline-btn {
+  border: 1px solid #ddd9e7;
+
+  border-radius: 9px;
+
+  background: white;
+
+  color: #333;
+
+  font-weight: 700;
+}
+
+
+/* NO RESULTS */
+
+.no-students {
+  padding: 60px 20px;
+
+  text-align: center;
+
+  background: white;
+
+  border: 1px solid #e8e5f0;
+
+  border-radius: 16px;
+}
+
+.no-students > div {
+  font-size: 40px;
+
+  margin-bottom: 10px;
+}
+
+.no-students h3 {
+  margin: 0 0 8px;
+}
+
+.no-students p {
+  color: #777;
+
+  margin-bottom: 20px;
+}
+
+
+/* =====================================================
+   PROFILE MODAL
+===================================================== */
+
+.profile-modal-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 9999;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(15, 13, 30, 0.65);
+
+  backdrop-filter: blur(4px);
+}
+
+.student-profile-modal {
+  position: relative;
+
+  width: 100%;
+
+  max-width: 500px;
+
+  max-height: 90vh;
+
+  overflow-y: auto;
+
+  padding: 32px;
+
+  background: white;
+
+  border-radius: 20px;
+
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.25);
+
+  text-align: center;
+}
+
+.modal-close {
+  position: absolute;
+
+  top: 15px;
+  right: 15px;
+
+  width: 34px;
+  height: 34px;
+
+  border: none;
+
+  border-radius: 50%;
+
+  background: #f1eff6;
+
+  color: #555;
+
+  cursor: pointer;
+
+  font-size: 15px;
+}
+
+.modal-avatar {
+  width: 75px;
+  height: 75px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto 15px;
+
+  border-radius: 20px;
+
+  background: #f0ebff;
+
+  font-size: 38px;
+}
+
+.student-profile-modal h2 {
+  margin: 0 0 6px;
+
+  font-size: 25px;
+}
+
+.modal-skills {
+  margin: 0 0 12px;
+
+  color: #704cff;
+
+  font-weight: 600;
+}
+
+.modal-rating {
+  display: inline-block;
+
+  padding: 7px 12px;
+
+  border-radius: 20px;
+
+  background: #fff8df;
+
+  font-size: 13px;
+
+  font-weight: 700;
+}
+
+
+/* DETAILS */
+
+.modal-details {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 10px;
+
+  margin: 25px 0;
+}
+
+.modal-details > div {
+  padding: 13px 8px;
+
+  border-radius: 10px;
+
+  background: #f8f7fb;
+}
+
+.modal-details span {
+  display: block;
+
+  margin-bottom: 6px;
+}
+
+.modal-details small {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #888;
+
+  font-size: 10px;
+}
+
+.modal-details strong {
+  display: block;
+
+  font-size: 11px;
+}
+
+
+/* ABOUT */
+
+.modal-about {
+  padding: 18px;
+
+  border-radius: 12px;
+
+  background: #f8f7fb;
+
+  text-align: left;
+}
+
+.modal-about h4 {
+  margin: 0 0 7px;
+}
+
+.modal-about p {
+  margin: 0;
+
+  color: #666;
+
+  font-size: 13px;
+
+  line-height: 1.6;
+}
+
+
+/* MODAL ACTIONS */
+
+.modal-actions {
+  display: flex;
+
+  gap: 10px;
+
+  margin-top: 22px;
+}
+
+.modal-actions button,
+.modal-actions a {
+  flex: 1;
+
+  min-height: 45px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  text-decoration: none;
+}
+
+.modal-actions .outline-btn {
+  border: 1px solid #ddd9e7;
+
+  border-radius: 9px;
+
+  background: white;
+
+  cursor: pointer;
+
+  font-weight: 700;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 1000px) {
+
+  .student-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+@media (max-width: 650px) {
+
+  .student-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .student-result-info {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 5px;
+  }
+
+  .modal-details {
+    grid-template-columns: 1fr;
+  }
+
+  .student-profile-modal {
+    padding: 25px 20px;
+  }
+
+}
+/* =========================================
+   PROPOSALS
+========================================= */
+
+.proposal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 25px;
+}
+
+.proposal-card {
+  display: grid;
+  grid-template-columns: 65px 1fr auto;
+  align-items: center;
+  gap: 20px;
+
+  padding: 22px;
+
+  background: white;
+  border: 1px solid #e7e3ef;
+  border-radius: 16px;
+
+  box-shadow: 0 7px 25px rgba(30, 20, 70, 0.06);
+}
+
+.proposal-info h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.proposal-info p {
+  margin: 5px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.proposal-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.proposal-actions button {
+  min-width: 90px;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.proposal-actions button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.hired-status {
+  display: inline-block;
+  margin-top: 9px;
+  padding: 5px 10px;
+
+  background: #e9f9ef;
+  color: #218542;
+
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+
+/* =========================================
+   PROPOSAL MODAL
+========================================= */
+
+.proposal-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(15, 13, 30, 0.65);
+  backdrop-filter: blur(4px);
+}
+
+.proposal-modal {
+  position: relative;
+
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+
+  overflow-y: auto;
+
+  padding: 30px;
+
+  background: white;
+  border-radius: 20px;
+
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.25);
+
+  text-align: center;
+}
+
+.proposal-modal-close {
+  position: absolute;
+
+  top: 14px;
+  right: 14px;
+
+  width: 35px;
+  height: 35px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: #f0eef5;
+
+  cursor: pointer;
+}
+
+.proposal-modal-avatar {
+  width: 72px;
+  height: 72px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto 15px;
+
+  border-radius: 18px;
+
+  background: #f0ebff;
+
+  font-size: 35px;
+}
+
+.proposal-modal h2 {
+  margin: 0 0 5px;
+  font-size: 25px;
+}
+
+.proposal-modal-role {
+  margin: 0 0 10px;
+  color: #704cff;
+  font-weight: 600;
+}
+
+.proposal-modal-rating {
+  display: inline-block;
+
+  padding: 7px 12px;
+
+  background: #fff8df;
+  border-radius: 20px;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+
+/* DETAILS */
+
+.proposal-details-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 10px;
+
+  margin: 25px 0;
+}
+
+.proposal-details-grid div {
+  padding: 13px 8px;
+
+  background: #f8f7fb;
+  border-radius: 10px;
+}
+
+.proposal-details-grid small {
+  display: block;
+  margin-bottom: 5px;
+
+  color: #888;
+  font-size: 10px;
+}
+
+.proposal-details-grid strong {
+  font-size: 12px;
+}
+
+
+/* SECTIONS */
+
+.proposal-modal-section {
+  margin-top: 15px;
+  padding: 15px;
+
+  background: #f8f7fb;
+
+  border-radius: 11px;
+
+  text-align: left;
+}
+
+.proposal-modal-section h4 {
+  margin: 0 0 6px;
+}
+
+.proposal-modal-section p {
+  margin: 0;
+
+  color: #666;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+
+/* MODAL BUTTONS */
+
+.proposal-modal-actions {
+  display: flex;
+  gap: 10px;
+
+  margin-top: 22px;
+}
+
+.proposal-modal-actions button {
+  flex: 1;
+
+  min-height: 45px;
+
+  cursor: pointer;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+  .proposal-card {
+    grid-template-columns: 55px 1fr;
+  }
+
+  .proposal-actions {
+    grid-column: 1 / -1;
+  }
+
+  .proposal-actions button {
+    flex: 1;
+  }
+
+  .proposal-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .proposal-modal {
+    padding: 25px 18px;
+  }
+
+}
