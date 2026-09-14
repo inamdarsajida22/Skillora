@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import DashboardLayout from "../../components/DashboardLayout";
 
 function PostProject() {
+  const [posted, setPosted] = useState(false);
+
   const [formData, setFormData] = useState({
     title: "",
     category: "",
@@ -13,27 +15,17 @@ function PostProject() {
     workType: "Remote",
   });
 
-  const [posted, setPosted] = useState(false);
-
   const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
 
     setPosted(false);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (Number(formData.budget) <= 0) {
-      alert("Please enter a valid budget.");
-      return;
-    }
-
     setPosted(true);
 
     window.scrollTo({
@@ -42,7 +34,7 @@ function PostProject() {
     });
   };
 
-  const resetForm = () => {
+  const handleReset = () => {
     setFormData({
       title: "",
       category: "",
@@ -63,14 +55,14 @@ function PostProject() {
       <div className="client-page-header">
 
         <div>
-          <div className="client-eyebrow">
-            CLIENT WORKSPACE 🚀
-          </div>
+          <span className="client-eyebrow">
+            CLIENT AREA
+          </span>
 
-          <h1>Post a Project</h1>
+          <h1>Post a Project 🚀</h1>
 
           <p>
-            Create your project and find the right student talent.
+            Tell students what you need and find the right talent.
           </p>
         </div>
 
@@ -83,159 +75,114 @@ function PostProject() {
 
       </div>
 
-
       {/* SUCCESS MESSAGE */}
       {posted && (
         <div className="project-success">
-
-          <div className="success-icon">
-            ✓
-          </div>
-
           <div>
-            <h3>Project Posted Successfully! 🎉</h3>
-
+            <strong>🎉 Project Posted Successfully!</strong>
             <p>
               Your project is now visible to talented students.
             </p>
           </div>
 
-          <Link
-            to="/client/projects"
-            className="success-link"
-          >
-            View Projects →
+          <Link to="/client/projects">
+            View My Projects →
           </Link>
-
         </div>
       )}
 
-
+      {/* MAIN CONTENT */}
       <div className="post-project-layout">
 
-        {/* LEFT FORM */}
+        {/* FORM CARD */}
         <div className="project-form-card">
 
           <div className="form-card-header">
-
             <div className="form-header-icon">
-              📋
+              🚀
             </div>
 
             <div>
               <h2>Project Details</h2>
-              <p>Tell students what you need.</p>
+              <p>
+                Add details about your project requirements.
+              </p>
             </div>
-
           </div>
-
 
           <form onSubmit={handleSubmit}>
 
-            {/* PROJECT TITLE */}
+            {/* TITLE */}
             <div className="form-group">
-
               <label>
-                Project Title
-                <span>*</span>
+                Project Title <span>*</span>
               </label>
 
-              <input
-                type="text"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                placeholder="Example: Build a React Website"
-                required
-              />
+              <div className="input-with-icon">
+                <span>📝</span>
 
-              <small>
-                Give your project a clear and attractive title.
-              </small>
-
+                <input
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  placeholder="Example: Build a React Website"
+                  required
+                />
+              </div>
             </div>
 
-
-            {/* CATEGORY */}
-            <div className="form-group">
-
-              <label>
-                Category
-                <span>*</span>
-              </label>
-
-              <select
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                required
-              >
-
-                <option value="">
-                  Select Project Category
-                </option>
-
-                <option value="Web Development">
-                  💻 Web Development
-                </option>
-
-                <option value="App Development">
-                  📱 App Development
-                </option>
-
-                <option value="UI/UX Design">
-                  🎨 UI/UX Design
-                </option>
-
-                <option value="Graphic Design">
-                  🖌️ Graphic Design
-                </option>
-
-                <option value="Content Writing">
-                  ✍️ Content Writing
-                </option>
-
-                <option value="Digital Marketing">
-                  📢 Digital Marketing
-                </option>
-
-              </select>
-
-            </div>
-
-
-            {/* SKILLS */}
-            <div className="form-group">
-
-              <label>
-                Required Skills
-                <span>*</span>
-              </label>
-
-              <input
-                type="text"
-                name="skills"
-                value={formData.skills}
-                onChange={handleChange}
-                placeholder="React, JavaScript, HTML, CSS"
-                required
-              />
-
-              <small>
-                💡 Separate skills using commas.
-              </small>
-
-            </div>
-
-
-            {/* BUDGET + DEADLINE */}
+            {/* CATEGORY + BUDGET */}
             <div className="form-row">
 
               <div className="form-group">
-
                 <label>
-                  Budget
-                  <span>*</span>
+                  Category <span>*</span>
+                </label>
+
+                <div className="input-with-icon">
+                  <span>📂</span>
+
+                  <select
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">
+                      Select Category
+                    </option>
+
+                    <option>
+                      Web Development
+                    </option>
+
+                    <option>
+                      App Development
+                    </option>
+
+                    <option>
+                      UI/UX Design
+                    </option>
+
+                    <option>
+                      Graphic Design
+                    </option>
+
+                    <option>
+                      Content Writing
+                    </option>
+
+                    <option>
+                      Digital Marketing
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>
+                  Budget <span>*</span>
                 </label>
 
                 <div className="input-with-icon">
@@ -244,94 +191,110 @@ function PostProject() {
                   <input
                     type="number"
                     name="budget"
-                    min="1"
                     value={formData.budget}
                     onChange={handleChange}
                     placeholder="5000"
+                    min="1"
                     required
                   />
                 </div>
-
-              </div>
-
-
-              <div className="form-group">
-
-                <label>
-                  Deadline
-                  <span>*</span>
-                </label>
-
-                <input
-                  type="date"
-                  name="deadline"
-                  value={formData.deadline}
-                  onChange={handleChange}
-                  min={new Date().toISOString().split("T")[0]}
-                  required
-                />
-
               </div>
 
             </div>
 
+            {/* SKILLS */}
+            <div className="form-group">
+              <label>
+                Required Skills <span>*</span>
+              </label>
+
+              <div className="input-with-icon">
+                <span>💡</span>
+
+                <input
+                  type="text"
+                  name="skills"
+                  value={formData.skills}
+                  onChange={handleChange}
+                  placeholder="React, JavaScript, HTML, CSS"
+                  required
+                />
+              </div>
+
+              <small>
+                Separate multiple skills using commas.
+              </small>
+            </div>
+
+            {/* DEADLINE + WORK TYPE */}
+            <div className="form-row">
+
+              <div className="form-group">
+                <label>
+                  Deadline <span>*</span>
+                </label>
+
+                <div className="input-with-icon">
+                  <span>📅</span>
+
+                  <input
+                    type="date"
+                    name="deadline"
+                    value={formData.deadline}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>
+                  Work Type
+                </label>
+
+                <div className="input-with-icon">
+                  <span>🌐</span>
+
+                  <select
+                    name="workType"
+                    value={formData.workType}
+                    onChange={handleChange}
+                  >
+                    <option>Remote</option>
+                    <option>On-site</option>
+                    <option>Hybrid</option>
+                  </select>
+                </div>
+              </div>
+
+            </div>
 
             {/* DESCRIPTION */}
             <div className="form-group">
-
               <label>
-                Project Description
-                <span>*</span>
+                Project Description <span>*</span>
               </label>
 
               <textarea
                 name="description"
-                rows="6"
                 value={formData.description}
                 onChange={handleChange}
-                placeholder="Describe your project, requirements, expected result..."
+                rows="7"
+                placeholder="Describe your project, requirements, expected work and any important details..."
                 required
               />
-
-              <small>
-                Be specific about what you expect from the student.
-              </small>
-
             </div>
-
-
-            {/* WORK TYPE */}
-            <div className="form-group">
-
-              <label>
-                Work Type
-              </label>
-
-              <select
-                name="workType"
-                value={formData.workType}
-                onChange={handleChange}
-              >
-
-                <option value="Remote">
-                  🌐 Remote
-                </option>
-
-                <option value="On-site">
-                  🏢 On-site
-                </option>
-
-                <option value="Hybrid">
-                  🔄 Hybrid
-                </option>
-
-              </select>
-
-            </div>
-
 
             {/* BUTTONS */}
             <div className="form-buttons">
+
+              <button
+                type="button"
+                className="reset-btn"
+                onClick={handleReset}
+              >
+                ↻ Reset
+              </button>
 
               <button
                 type="submit"
@@ -340,158 +303,110 @@ function PostProject() {
                 🚀 Publish Project
               </button>
 
-              <button
-                type="button"
-                className="reset-btn"
-                onClick={resetForm}
-              >
-                ↻ Reset
-              </button>
-
             </div>
 
           </form>
-
         </div>
 
-
-        {/* RIGHT PREVIEW */}
+        {/* PREVIEW CARD */}
         <div className="project-preview-card">
 
           <div className="preview-header">
-
             <div className="preview-icon">
-              👁️
+              👁
             </div>
 
             <div>
-              <h2>Live Preview</h2>
-
+              <h3>Project Preview</h3>
               <p>
-                Student view
+                This is how students will see your project.
               </p>
             </div>
-
           </div>
-
 
           <div className="preview-project">
 
             <div className="preview-top">
 
               <div className="preview-company-logo">
-                🏢
+                C
               </div>
 
               <span className="preview-status">
-                NEW
+                Hiring
               </span>
 
             </div>
-
 
             <span className="preview-category">
               {formData.category || "Project Category"}
             </span>
 
-
             <h2>
               {formData.title || "Your Project Title"}
             </h2>
 
-
             <p className="preview-company">
-              🏢 Your Company
+              Your Company
             </p>
-
 
             <div className="preview-info">
 
-              <div>
-                <span>💰</span>
+              <span>
+                💰 ₹{formData.budget || "0"}
+              </span>
 
-                <div>
-                  <small>Budget</small>
-
-                  <strong>
-                    {formData.budget
-                      ? `₹${Number(formData.budget).toLocaleString("en-IN")}`
-                      : "₹0"}
-                  </strong>
-                </div>
-              </div>
-
-
-              <div>
-                <span>🌐</span>
-
-                <div>
-                  <small>Work Type</small>
-
-                  <strong>
-                    {formData.workType}
-                  </strong>
-                </div>
-              </div>
+              <span>
+                🌐 {formData.workType}
+              </span>
 
             </div>
 
-
             <div className="preview-section">
-
-              <h4>
-                🛠 Required Skills
-              </h4>
+              <h4>Required Skills</h4>
 
               <div className="preview-skills">
 
-                {formData.skills ? (
-                  formData.skills
-                    .split(",")
-                    .filter((skill) => skill.trim())
-                    .map((skill, index) => (
-                      <span key={index}>
-                        {skill.trim()}
-                      </span>
-                    ))
-                ) : (
-                  <span>React</span>
-                )}
+                {formData.skills
+                  ? formData.skills
+                      .split(",")
+                      .map((skill, index) => (
+                        <span key={index}>
+                          {skill.trim()}
+                        </span>
+                      ))
+                  : (
+                    <>
+                      <span>React</span>
+                      <span>JavaScript</span>
+                      <span>HTML</span>
+                    </>
+                  )}
 
               </div>
-
             </div>
-
 
             <div className="preview-section">
 
-              <h4>
-                📝 Description
-              </h4>
+              <h4>Description</h4>
 
               <p>
                 {formData.description ||
-                  "Your project description will appear here. Add details about your project requirements."}
+                  "Your project description will appear here."}
               </p>
 
             </div>
 
-
-            {formData.deadline && (
-              <div className="preview-deadline">
-                📅 Deadline: {formData.deadline}
-              </div>
-            )}
-
+            <div className="preview-deadline">
+              📅 Deadline:{" "}
+              {formData.deadline || "Not selected"}
+            </div>
 
             <button
-              className="preview-apply-btn"
               type="button"
-              onClick={() =>
-                alert("Students can apply to this project.")
-              }
+              className="preview-apply-btn"
             >
-              🚀 Apply for Project
+              View Project
             </button>
 
           </div>
