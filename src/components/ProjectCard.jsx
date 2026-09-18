@@ -52,7 +52,7 @@ function ProjectCard({
       params.append("bid_amount", bidAmount);
 
       const response = await fetch(
-        `http://127.0.0.1:8000/api/proposals/?${params.toString()}`,
+        `https://skillora-ex4a.onrender.com/api/proposals/?${params.toString()}`,
         {
           method: "POST",
         }

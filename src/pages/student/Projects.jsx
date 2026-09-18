@@ -11,7 +11,7 @@ function Projects() {
 
   // Load projects from backend
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/projects/")
+    fetch("https://skillora-ex4a.onrender.com/api/projects/")
       .then(async (response) => {
         if (!response.ok) {
           throw new Error("Failed to load projects");

@@ -22,7 +22,7 @@ function ClientProfile() {
       return;
     }
 
-    fetch(`http://127.0.0.1:8000/api/client-profile/${userId}`)
+    fetch(`https://skillora-ex4a.onrender.com/api/client-profile/${userId}`)
       .then(async (res) => {
         if (res.status === 404) {
           // Profile doesn't exist yet
@@ -74,7 +74,7 @@ function ClientProfile() {
 
     try {
       const url =
-        `http://127.0.0.1:8000/api/client-profile/${userId}` +
+        `https://skillora-ex4a.onrender.com/api/client-profile/${userId}` +
         `?company_name=${encodeURIComponent(companyName)}` +
         `&location=${encodeURIComponent(location)}` +
         `&about=${encodeURIComponent(about)}`;

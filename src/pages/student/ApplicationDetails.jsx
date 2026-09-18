@@ -28,7 +28,7 @@ function ApplicationDetails() {
         const user = JSON.parse(storedUser);
 
         const proposalResponse = await fetch(
-          `http://127.0.0.1:8000/api/proposals/student/${user.id}`
+          `https://skillora-ex4a.onrender.com/api/proposals/student/${user.id}`
         );
 
         if (!proposalResponse.ok) {
@@ -49,7 +49,7 @@ function ApplicationDetails() {
 
         // Get project details
         const projectResponse = await fetch(
-          `http://127.0.0.1:8000/api/projects/${selectedApplication.project_id}`
+          `https://skillora-ex4a.onrender.com/api/projects/${selectedApplication.project_id}`
         );
 
         if (!projectResponse.ok) {
@@ -82,7 +82,7 @@ function ApplicationDetails() {
 
   try {
     const response = await fetch(
-      `http://127.0.0.1:8000/api/proposals/${application.id}/withdraw`,
+      `https://skillora-ex4a.onrender.com/api/proposals/${application.id}/withdraw`,
       {
         method: "PUT",
       }

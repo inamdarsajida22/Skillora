@@ -16,7 +16,7 @@ function Notifications() {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/notifications/${userId}`
+        `https://skillora-ex4a.onrender.com/api/notifications/${userId}`
       );
 
       const data = await response.json();
@@ -42,7 +42,7 @@ function Notifications() {
   const markAsRead = async (notificationId) => {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/notifications/${notificationId}/read`,
+        `https://skillora-ex4a.onrender.com/api/notifications/${notificationId}/read`,
         {
           method: "PUT",
         }
@@ -80,7 +80,7 @@ function Notifications() {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/notifications/${notificationId}`,
+        `https://skillora-ex4a.onrender.com/api/notifications/${notificationId}`,
         {
           method: "DELETE",
         }

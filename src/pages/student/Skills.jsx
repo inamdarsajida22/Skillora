@@ -20,7 +20,7 @@ function Skills() {
       return;
     }
 
-    fetch(`http://127.0.0.1:8000/api/skills/${userId}`)
+    fetch(`https://skillora-ex4a.onrender.com/api/skills/${userId}`)
       .then(async (response) => {
         if (!response.ok) {
           throw new Error("Failed to load skills");
@@ -64,7 +64,7 @@ function Skills() {
       params.append("level", "Beginner");
 
       const response = await fetch(
-        `http://127.0.0.1:8000/api/skills/${userId}?${params.toString()}`,
+        `https://skillora-ex4a.onrender.com/api/skills/${userId}?${params.toString()}`,
         {
           method: "POST",
         }
@@ -94,7 +94,7 @@ function Skills() {
   const removeSkill = async (skillId) => {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/skills/${skillId}`,
+        `https://skillora-ex4a.onrender.com/api/skills/${skillId}`,
         {
           method: "DELETE",
         }

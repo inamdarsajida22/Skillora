@@ -19,7 +19,7 @@ function Applications() {
     }
 
     fetch(
-      `http://127.0.0.1:8000/api/proposals/student/${studentId}`
+      `https://skillora-ex4a.onrender.com/api/proposals/student/${studentId}`
     )
       .then(async (response) => {
         if (!response.ok) {

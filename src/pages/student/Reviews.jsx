@@ -34,7 +34,7 @@ function Reviews() {
         setError("");
 
         const response = await fetch(
-          `http://127.0.0.1:8000/api/reviews/${userId}`
+          `https://skillora-ex4a.onrender.com/api/reviews/${userId}`
         );
 
         const data = await response.json();
@@ -90,7 +90,7 @@ function Reviews() {
       params.append("comment", reviewText);
 
       const response = await fetch(
-        `http://127.0.0.1:8000/api/reviews/?${params.toString()}`,
+        `https://skillora-ex4a.onrender.com/api/reviews/?${params.toString()}`,
         {
           method: "POST",
         }
@@ -144,7 +144,7 @@ function Reviews() {
       setError("");
 
       const response = await fetch(
-        `http://127.0.0.1:8000/api/reviews/${reviewId}`,
+        `https://skillora-ex4a.onrender.com/api/reviews/${reviewId}`,
         {
           method: "DELETE",
         }

@@ -33,7 +33,7 @@ function Messages() {
         setError("");
 
         const response = await fetch(
-          `http://127.0.0.1:8000/api/messages/${userId}/${selectedChat.id}`
+          `https://skillora-ex4a.onrender.com/api/messages/${userId}/${selectedChat.id}`
         );
 
         if (!response.ok) {
@@ -94,7 +94,7 @@ function Messages() {
       params.append("message", message);
 
       const response = await fetch(
-        `http://127.0.0.1:8000/api/messages/?${params.toString()}`,
+        `https://skillora-ex4a.onrender.com/api/messages/?${params.toString()}`,
         {
           method: "POST",
         }

@@ -25,7 +25,7 @@ function Portfolio() {
       return;
     }
 
-    fetch(`http://127.0.0.1:8000/api/portfolio/${userId}`)
+    fetch(`https://skillora-ex4a.onrender.com/api/portfolio/${userId}`)
       .then(async (response) => {
         if (!response.ok) {
           throw new Error("Failed to load portfolio");
@@ -64,7 +64,7 @@ function Portfolio() {
 
     try {
       const url =
-        `http://127.0.0.1:8000/api/portfolio/` +
+        `https://skillora-ex4a.onrender.com/api/portfolio/` +
         `?user_id=${userId}` +
         `&title=${encodeURIComponent(title)}` +
         `&description=${encodeURIComponent(description)}` +
@@ -118,7 +118,7 @@ function Portfolio() {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/portfolio/${projectId}`,
+        `https://skillora-ex4a.onrender.com/api/portfolio/${projectId}`,
         {
           method: "DELETE",
         }

@@ -29,7 +29,7 @@ function StudentProfile() {
       return;
     }
 
-    fetch(`http://127.0.0.1:8000/api/profile/${userId}`)
+    fetch(`https://skillora-ex4a.onrender.com/api/profile/${userId}`)
       .then(async (response) => {
         if (response.status === 404) {
           // Profile doesn't exist yet
@@ -79,7 +79,7 @@ function StudentProfile() {
       params.append("education", education);
 
       const response = await fetch(
-        `http://127.0.0.1:8000/api/profile/${userId}?${params.toString()}`,
+        `https://skillora-ex4a.onrender.com/api/profile/${userId}?${params.toString()}`,
         {
           method: "POST",
         }

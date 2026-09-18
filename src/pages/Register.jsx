@@ -44,7 +44,7 @@ function Register() {
       });
 
       const response = await fetch(
-        `http://127.0.0.1:8000/api/auth/register?${params.toString()}`,
+        `https://skillora-ex4a.onrender.com/api/auth/register?${params.toString()}`,
         {
           method: "POST",
         }

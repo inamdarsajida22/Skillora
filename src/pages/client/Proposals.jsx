@@ -25,7 +25,7 @@ function Proposals() {
 
         // First get all projects
         const projectResponse = await fetch(
-          "http://127.0.0.1:8000/api/projects/"
+          "https://skillora-ex4a.onrender.com/api/projects/"
         );
 
         if (!projectResponse.ok) {
@@ -43,7 +43,7 @@ function Proposals() {
         const proposalResults = await Promise.all(
           clientProjects.map(async (project) => {
             const response = await fetch(
-              `http://127.0.0.1:8000/api/proposals/project/${project.id}`
+              `https://skillora-ex4a.onrender.com/api/proposals/project/${project.id}`
             );
 
             if (!response.ok) {
@@ -95,7 +95,7 @@ function Proposals() {
   const updateStatus = async (id, status) => {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/proposals/${id}/status?status=${status}`,
+        `https://skillora-ex4a.onrender.com/api/proposals/${id}/status?status=${status}`,
         {
           method: "PUT",
         }
