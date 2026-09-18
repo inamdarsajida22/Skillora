@@ -15,6 +15,8 @@ function Register() {
   });
 
   const [created, setCreated] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -23,20 +25,53 @@ function Register() {
     });
 
     setCreated(false);
+    setError("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setCreated(true);
+    setCreated(false);
+    setError("");
+    setLoading(true);
 
-    setTimeout(() => {
-      if (role === "student") {
-        navigate("/student/dashboard");
-      } else {
-        navigate("/client/dashboard");
+    try {
+      const params = new URLSearchParams({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        role: role,
+      });
+
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/auth/register?${params.toString()}`,
+        {
+          method: "POST",
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || "Registration failed");
       }
-    }, 1000);
+
+      if (data.success) {
+        setCreated(true);
+
+        setTimeout(() => {
+          if (role === "student") {
+            navigate("/student/dashboard");
+          } else {
+            navigate("/client/dashboard");
+          }
+        }, 1000);
+      }
+    } catch (err) {
+      setError(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -129,7 +164,10 @@ function Register() {
                   ? "role-btn active"
                   : "role-btn"
               }
-              onClick={() => setRole("student")}
+              onClick={() => {
+                setRole("student");
+                setError("");
+              }}
             >
               🎓 Student
             </button>
@@ -141,7 +179,10 @@ function Register() {
                   ? "role-btn active"
                   : "role-btn"
               }
-              onClick={() => setRole("client")}
+              onClick={() => {
+                setRole("client");
+                setError("");
+              }}
             >
               💼 Client
             </button>
@@ -154,6 +195,14 @@ function Register() {
           {created && (
             <div className="register-success">
               ✅ Account created successfully!
+            </div>
+          )}
+
+          {/* ERROR */}
+
+          {error && (
+            <div className="register-error">
+              ❌ {error}
             </div>
           )}
 
@@ -298,12 +347,11 @@ function Register() {
             <button
               type="submit"
               className="register-submit"
+              disabled={loading}
             >
-              Create{" "}
-              {role === "student"
-                ? "Student"
-                : "Client"}{" "}
-              Account →
+              {loading
+                ? "Creating Account..."
+                : `Create ${role === "student" ? "Student" : "Client"} Account →`}
             </button>
 
           </form>

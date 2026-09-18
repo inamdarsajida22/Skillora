@@ -14,6 +14,7 @@ import StudentProfile from "./pages/student/StudentProfile";
 import Skills from "./pages/student/Skills";
 import SkillTest from "./pages/student/SkillTest";
 import Projects from "./pages/student/Projects";
+import Notifications from "./pages/student/Notifications";
 import ProjectDetails from "./pages/student/ProjectDetailsTemp";
 import Applications from "./pages/student/Applications";
 import ApplicationDetails from "./pages/student/ApplicationDetails";
@@ -154,7 +155,7 @@ function App() {
       />
 
       <Route
-        path="/student/applications/view/:title"
+        path="/student/applications/view/:id"
         element={
           <Layout>
             <ApplicationDetails />
@@ -216,6 +217,10 @@ function App() {
           </Layout>
         }
       />
+      <Route
+  path="/student/notifications"
+  element={<Notifications />}
+/>
 
 
       {/* ================= CLIENT ================= */}

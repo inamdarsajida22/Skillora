@@ -21,9 +21,9 @@ function StudentDashboard() {
 
         {/* Notifications */}
         <Link
-          to="/student/messages"
+          to="/student/notifications"
           className="notification"
-          title="Open Messages"
+          title="Open notifications"
         >
           🔔 <span>3</span>
         </Link>

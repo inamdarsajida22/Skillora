@@ -1,41 +1,78 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DashboardLayout from "../../components/DashboardLayout";
 import ProjectCard from "../../components/ProjectCard";
 
 function Projects() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const projects = [
-    {
-      title: "React Website Development",
-      category: "Web Development",
-      budget: "12,000",
-      company: "TechNova",
-      match: "96%",
-    },
-    {
-      title: "Instagram Post Design",
-      category: "Graphic Design",
-      budget: "5,000",
-      company: "Brandify",
-      match: "90%",
-    },
-    {
-      title: "Python Data Analysis",
-      category: "Python",
-      budget: "9,000",
-      company: "DataWorks",
-      match: "86%",
-    },
-    {
-      title: "Mobile App UI Design",
-      category: "UI/UX",
-      budget: "8,000",
-      company: "AppZone",
-      match: "82%",
-    },
-  ];
+  // Load projects from backend
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/projects/")
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error("Failed to load projects");
+        }
+
+        const data = await response.json();
+
+        // Convert backend data to existing ProjectCard format
+        const formattedProjects = (data.projects || []).map((project) => {
+          let projectCategory = "Web Development";
+
+          const skills = (project.skills || "").toLowerCase();
+
+          if (
+            skills.includes("python") ||
+            skills.includes("data")
+          ) {
+            projectCategory = "Python";
+          } else if (
+            skills.includes("design") ||
+            skills.includes("graphic")
+          ) {
+            projectCategory = "Graphic Design";
+          } else if (
+            skills.includes("ui") ||
+            skills.includes("ux")
+          ) {
+            projectCategory = "UI/UX";
+          } else if (
+            skills.includes("react") ||
+            skills.includes("javascript") ||
+            skills.includes("html") ||
+            skills.includes("css")
+          ) {
+            projectCategory = "Web Development";
+          }
+
+          return {
+            id: project.id,
+            title: project.title,
+            description: project.description,
+            category: projectCategory,
+            budget: project.budget || "Negotiable",
+            company: project.client_id
+              ? `Client #${project.client_id}`
+              : "Skillora Client",
+            match: "90%",
+            skills: project.skills || "",
+            status: project.status,
+          };
+        });
+
+        setProjects(formattedProjects);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setError("❌ Unable to connect to backend.");
+        setLoading(false);
+      });
+  }, []);
 
   const filtered = projects.filter((project) => {
     const searchText = search.toLowerCase().trim();
@@ -43,7 +80,8 @@ function Projects() {
     const matchesSearch =
       project.title.toLowerCase().includes(searchText) ||
       project.category.toLowerCase().includes(searchText) ||
-      project.company.toLowerCase().includes(searchText);
+      project.company.toLowerCase().includes(searchText) ||
+      project.skills.toLowerCase().includes(searchText);
 
     const matchesCategory =
       category === "All" ||
@@ -89,15 +127,19 @@ function Projects() {
           onChange={(e) => setCategory(e.target.value)}
         >
           <option value="All">All Categories</option>
+
           <option value="Web Development">
             Web Development
           </option>
+
           <option value="Graphic Design">
             Graphic Design
           </option>
+
           <option value="Python">
             Python
           </option>
+
           <option value="UI/UX">
             UI/UX
           </option>
@@ -120,8 +162,11 @@ function Projects() {
 
         <div>
           <h2>
-            {filtered.length} Project
-            {filtered.length !== 1 ? "s" : ""} Found
+            {loading
+              ? "Loading Projects..."
+              : `${filtered.length} Project${
+                  filtered.length !== 1 ? "s" : ""
+                } Found`}
           </h2>
 
           <p>
@@ -132,13 +177,27 @@ function Projects() {
       </div>
 
 
+      {/* ================= ERROR ================= */}
+      {error && (
+        <div className="error">
+          {error}
+        </div>
+      )}
+
+
       {/* ================= PROJECTS ================= */}
       <div className="project-grid">
 
-        {filtered.length > 0 ? (
-          filtered.map((project, index) => (
+        {loading ? (
+          <div className="empty-state">
+            <div className="big-icon">⏳</div>
+            <h2>Loading Projects...</h2>
+            <p>Please wait while we fetch projects.</p>
+          </div>
+        ) : filtered.length > 0 ? (
+          filtered.map((project) => (
             <ProjectCard
-              key={index}
+              key={project.id}
               {...project}
             />
           ))

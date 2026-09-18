@@ -1,99 +1,252 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DashboardLayout from "../../components/DashboardLayout";
 
 function Reviews() {
-
-  const [reviews, setReviews] = useState([
-    {
-      client: "TechNova",
-      rating: 5,
-      text: "Excellent work and very professional. Delivered the project on time."
-    },
-    {
-      client: "Brandify",
-      rating: 4,
-      text: "Good communication and creative work. Would definitely work again."
-    }
-  ]);
+  const [reviews, setReviews] = useState([]);
 
   const [showForm, setShowForm] = useState(false);
-  const [client, setClient] = useState("");
+  const [reviewerId, setReviewerId] = useState("");
   const [rating, setRating] = useState(5);
   const [reviewText, setReviewText] = useState("");
 
-  const addReview = () => {
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-    if (!client.trim() || !reviewText.trim()) {
-      alert("Please enter client name and review.");
+  // Logged-in student
+  const storedUser = localStorage.getItem("skilloraUser");
+  const user = storedUser ? JSON.parse(storedUser) : null;
+  const userId = user?.id;
+
+  // ================= LOAD REVIEWS =================
+
+  useEffect(() => {
+    if (!userId) {
+      setError("Please login first.");
+      setLoading(false);
       return;
     }
 
-    const newReview = {
-      client: client.trim(),
-      rating: rating,
-      text: reviewText.trim()
+    const loadReviews = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const response = await fetch(
+          `http://127.0.0.1:8000/api/reviews/${userId}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data.detail || "Failed to load reviews"
+          );
+        }
+
+        setReviews(data.reviews || []);
+
+      } catch (err) {
+        console.error(err);
+        setError(`❌ ${err.message}`);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    setReviews([...reviews, newReview]);
+    loadReviews();
+  }, [userId]);
 
-    setClient("");
-    setRating(5);
-    setReviewText("");
-    setShowForm(false);
+
+  // ================= ADD REVIEW =================
+
+  const addReview = async () => {
+    if (!userId) {
+      setError("Please login first.");
+      return;
+    }
+
+    if (!reviewerId.trim()) {
+      setError("Please enter client ID.");
+      return;
+    }
+
+    if (!reviewText.trim()) {
+      setError("Please enter review.");
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      setError("");
+      setSuccess("");
+
+      const params = new URLSearchParams();
+
+      params.append("reviewer_id", reviewerId);
+      params.append("reviewed_user_id", userId);
+      params.append("rating", rating);
+      params.append("comment", reviewText);
+
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/reviews/?${params.toString()}`,
+        {
+          method: "POST",
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.detail || "Failed to add review"
+        );
+      }
+
+      setReviews((prev) => [
+        data.review,
+        ...prev
+      ]);
+
+      setReviewerId("");
+      setRating(5);
+      setReviewText("");
+      setShowForm(false);
+
+      setSuccess("✅ Review added successfully!");
+
+      setTimeout(() => {
+        setSuccess("");
+      }, 2500);
+
+    } catch (err) {
+      console.error(err);
+      setError(`❌ ${err.message}`);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
 
-  const deleteReview = (index) => {
+  // ================= DELETE REVIEW =================
 
+  const deleteReview = async (reviewId) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this review?"
     );
 
-    if (confirmDelete) {
-      setReviews(
-        reviews.filter((_, i) => i !== index)
+    if (!confirmDelete) {
+      return;
+    }
+
+    try {
+      setError("");
+
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/reviews/${reviewId}`,
+        {
+          method: "DELETE",
+        }
       );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.detail || "Failed to delete review"
+        );
+      }
+
+      setReviews((prev) =>
+        prev.filter(
+          (review) => review.id !== reviewId
+        )
+      );
+
+      setSuccess("🗑️ Review deleted successfully!");
+
+      setTimeout(() => {
+        setSuccess("");
+      }, 2000);
+
+    } catch (err) {
+      console.error(err);
+      setError(`❌ ${err.message}`);
     }
   };
 
 
+  // ================= STARS =================
+
   const renderStars = (rating) => {
-    return "⭐".repeat(rating);
+    return "⭐".repeat(Number(rating));
   };
 
 
   return (
     <DashboardLayout>
 
+      {/* HEADER */}
+
       <div className="page-header">
 
         <div>
           <h1>My Reviews ⭐</h1>
-          <p>What clients say about your work.</p>
+
+          <p>
+            What clients say about your work.
+          </p>
         </div>
 
         <button
           className="primary-btn"
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => {
+            setShowForm(!showForm);
+            setError("");
+          }}
         >
-          {showForm ? "✕ Close" : "+ Add Review"}
+          {showForm
+            ? "✕ Close"
+            : "+ Add Review"}
         </button>
 
       </div>
 
 
+      {/* SUCCESS */}
+
+      {success && (
+        <p className="success">
+          {success}
+        </p>
+      )}
+
+
+      {/* ERROR */}
+
+      {error && (
+        <p className="error">
+          {error}
+        </p>
+      )}
+
+
       {/* ADD REVIEW FORM */}
 
       {showForm && (
+
         <div className="form-card">
 
           <h2>Add Client Review</h2>
 
           <input
-            type="text"
-            placeholder="Client name"
-            value={client}
-            onChange={(e) => setClient(e.target.value)}
+            type="number"
+            placeholder="Client User ID"
+            value={reviewerId}
+            onChange={(e) =>
+              setReviewerId(e.target.value)
+            }
           />
 
           <div style={{ margin: "15px 0" }}>
@@ -105,14 +258,32 @@ function Reviews() {
             <select
               value={rating}
               onChange={(e) =>
-                setRating(Number(e.target.value))
+                setRating(
+                  Number(e.target.value)
+                )
               }
             >
-              <option value={5}>⭐⭐⭐⭐⭐ 5</option>
-              <option value={4}>⭐⭐⭐⭐ 4</option>
-              <option value={3}>⭐⭐⭐ 3</option>
-              <option value={2}>⭐⭐ 2</option>
-              <option value={1}>⭐ 1</option>
+
+              <option value={5}>
+                ⭐⭐⭐⭐⭐ 5
+              </option>
+
+              <option value={4}>
+                ⭐⭐⭐⭐ 4
+              </option>
+
+              <option value={3}>
+                ⭐⭐⭐ 3
+              </option>
+
+              <option value={2}>
+                ⭐⭐ 2
+              </option>
+
+              <option value={1}>
+                ⭐ 1
+              </option>
+
             </select>
 
           </div>
@@ -121,7 +292,9 @@ function Reviews() {
           <textarea
             placeholder="Write client review..."
             value={reviewText}
-            onChange={(e) => setReviewText(e.target.value)}
+            onChange={(e) =>
+              setReviewText(e.target.value)
+            }
             rows="4"
           />
 
@@ -129,8 +302,11 @@ function Reviews() {
           <button
             className="primary-btn"
             onClick={addReview}
+            disabled={submitting}
           >
-            ⭐ Submit Review
+            {submitting
+              ? "Submitting..."
+              : "⭐ Submit Review"}
           </button>
 
         </div>
@@ -141,67 +317,94 @@ function Reviews() {
 
       <div className="reviews-list">
 
-        {reviews.map((review, index) => (
+        {loading ? (
 
-          <div
-            className="review-card"
-            key={index}
-          >
+          <div className="empty-state">
 
-            <div className="review-avatar">
-              🏢
+            <div className="big-icon">
+              ⏳
             </div>
 
+            <h2>
+              Loading Reviews...
+            </h2>
 
-            <div style={{ flex: 1 }}>
+            <p>
+              Please wait while we fetch your reviews.
+            </p>
 
-              <h3>{review.client}</h3>
+          </div>
 
-              <div className="stars">
-                {renderStars(review.rating)}
+        ) : reviews.length > 0 ? (
+
+          reviews.map((review) => (
+
+            <div
+              className="review-card"
+              key={review.id}
+            >
+
+              <div className="review-avatar">
+                🏢
               </div>
 
-              <p>
-                "{review.text}"
-              </p>
+
+              <div style={{ flex: 1 }}>
+
+                <h3>
+                  Client #{review.reviewer_id}
+                </h3>
+
+                <div className="stars">
+                  {renderStars(review.rating)}
+                </div>
+
+                <p>
+                  "{review.comment || "No comment"}"
+                </p>
+
+              </div>
+
+
+              <button
+                className="small-btn"
+                onClick={() =>
+                  deleteReview(review.id)
+                }
+              >
+                🗑 Delete
+              </button>
 
             </div>
 
+          ))
+
+        ) : (
+
+          <div className="empty-state">
+
+            <h2>
+              ⭐ No Reviews Yet
+            </h2>
+
+            <p>
+              Your client reviews will appear here.
+            </p>
 
             <button
-              className="small-btn"
-              onClick={() => deleteReview(index)}
+              className="primary-btn"
+              onClick={() =>
+                setShowForm(true)
+              }
             >
-              🗑 Delete
+              + Add First Review
             </button>
 
           </div>
 
-        ))}
+        )}
 
       </div>
-
-
-      {/* EMPTY STATE */}
-
-      {reviews.length === 0 && (
-        <div className="empty-state">
-
-          <h2>⭐ No Reviews Yet</h2>
-
-          <p>
-            Your client reviews will appear here.
-          </p>
-
-          <button
-            className="primary-btn"
-            onClick={() => setShowForm(true)}
-          >
-            + Add First Review
-          </button>
-
-        </div>
-      )}
 
     </DashboardLayout>
   );

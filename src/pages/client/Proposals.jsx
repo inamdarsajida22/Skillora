@@ -1,47 +1,153 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DashboardLayout from "../../components/DashboardLayout";
 
 function Proposals() {
   const [selectedProposal, setSelectedProposal] = useState(null);
-  const [hired, setHired] = useState({});
+  const [proposals, setProposals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const proposals = [
-    {
-      id: 1,
-      avatar: "👩‍💻",
-      name: "Aarohi Sharma",
-      role: "React Developer",
-      rating: "4.9",
-      message:
-        "I can complete your website within 10 days.",
-      experience: "1+ Year",
-      skills: "React, JavaScript, HTML, CSS",
-      project: "College Website Redesign",
-      budget: "₹20,000",
-      delivery: "10 Days",
-    },
-    {
-      id: 2,
-      avatar: "👨‍💻",
-      name: "Rahul Patil",
-      role: "Full Stack Developer",
-      rating: "4.8",
-      message:
-        "Experienced in React and Node.js.",
-      experience: "2+ Years",
-      skills: "React, Node.js, MongoDB, JavaScript",
-      project: "College Website Redesign",
-      budget: "₹18,000",
-      delivery: "12 Days",
-    },
-  ];
+  const storedUser = localStorage.getItem("skilloraUser");
+  const user = storedUser ? JSON.parse(storedUser) : null;
+  const clientId = user?.id;
 
-  const handleHire = (id) => {
-    setHired((prev) => ({
-      ...prev,
-      [id]: true,
-    }));
+  // ================= LOAD PROPOSALS =================
+
+  useEffect(() => {
+    const loadProposals = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        if (!clientId) {
+          throw new Error("Please login as a client.");
+        }
+
+        // First get all projects
+        const projectResponse = await fetch(
+          "http://127.0.0.1:8000/api/projects/"
+        );
+
+        if (!projectResponse.ok) {
+          throw new Error("Failed to load projects.");
+        }
+
+        const projectData = await projectResponse.json();
+
+        // Only this client's projects
+        const clientProjects = (projectData.projects || []).filter(
+          (project) => project.client_id === clientId
+        );
+
+        // Get proposals for each project
+        const proposalResults = await Promise.all(
+          clientProjects.map(async (project) => {
+            const response = await fetch(
+              `http://127.0.0.1:8000/api/proposals/project/${project.id}`
+            );
+
+            if (!response.ok) {
+              return [];
+            }
+
+            const data = await response.json();
+
+            return (data.proposals || []).map((proposal) => ({
+              id: proposal.id,
+              studentId: proposal.student_id,
+              avatar: "👨‍💻",
+              name: `Student #${proposal.student_id}`,
+              role: "Student Freelancer",
+              rating: "New",
+              message:
+                proposal.message || "No proposal message.",
+              experience: "Student",
+              skills: project.skills || "Not specified",
+              project: project.title,
+              projectId: project.id,
+              budget:
+                proposal.bid_amount || "Not specified",
+              delivery: "7-15 Days",
+              status: proposal.status || "pending",
+            }));
+          })
+        );
+
+        const allProposals = proposalResults.flat();
+
+        setProposals(allProposals);
+        setLoading(false);
+
+      } catch (err) {
+        console.error(err);
+        setError(
+          err.message || "Unable to load proposals."
+        );
+        setLoading(false);
+      }
+    };
+
+    loadProposals();
+  }, [clientId]);
+
+  // ================= UPDATE STATUS =================
+
+  const updateStatus = async (id, status) => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/proposals/${id}/status?status=${status}`,
+        {
+          method: "PUT",
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.detail || "Failed to update proposal."
+        );
+      }
+
+      setProposals((prev) =>
+        prev.map((proposal) =>
+          proposal.id === id
+            ? {
+                ...proposal,
+                status: status,
+              }
+            : proposal
+        )
+      );
+
+      if (selectedProposal?.id === id) {
+        setSelectedProposal((prev) => ({
+          ...prev,
+          status: status,
+        }));
+      }
+
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    }
   };
+
+  // ================= STATUS CLASS =================
+
+  const getStatusClass = (status) => {
+    if (status === "shortlisted") {
+      return "status-1";
+    }
+
+    if (status === "rejected") {
+      return "status-2";
+    }
+
+    return "status-0";
+  };
+
+  // ================= UI =================
 
   return (
     <DashboardLayout type="client">
@@ -49,106 +155,207 @@ function Proposals() {
       {/* HEADER */}
 
       <div className="page-header">
-
         <div>
-          <p className="welcome">CLIENT WORKSPACE</p>
+          <p className="welcome">
+            CLIENT WORKSPACE
+          </p>
 
-          <h1>Project Proposals 📩</h1>
+          <h1>
+            Project Proposals 📩
+          </h1>
 
           <p>
             Review students who applied to your projects.
           </p>
         </div>
-
       </div>
 
 
-      {/* PROPOSALS */}
+      {/* ERROR */}
 
-      <div className="proposal-list">
-
-        {proposals.map((proposal) => (
-
-          <div className="proposal-card" key={proposal.id}>
-
-            <div className="student-avatar">
-              {proposal.avatar}
-            </div>
+      {error && (
+        <div className="error">
+          ❌ {error}
+        </div>
+      )}
 
 
-            <div className="proposal-info">
+      {/* LOADING */}
 
-              <h3>{proposal.name}</h3>
-
-              <p>
-                {proposal.role} • ⭐ {proposal.rating}
-              </p>
-
-              <p>
-                {proposal.message}
-              </p>
-
-              {hired[proposal.id] && (
-                <span className="hired-status">
-                  ✅ Hired
-                </span>
-              )}
-
-            </div>
-
-
-            <div className="proposal-actions">
-
-              {/* VIEW */}
-
-              <button
-                className="outline-btn"
-                onClick={() =>
-                  setSelectedProposal(proposal)
-                }
-              >
-                👁 View
-              </button>
-
-
-              {/* HIRE */}
-
-              <button
-                className="primary-btn"
-                onClick={() => handleHire(proposal.id)}
-                disabled={hired[proposal.id]}
-              >
-                {hired[proposal.id]
-                  ? "Hired ✓"
-                  : "Hire ✓"}
-              </button>
-
-            </div>
-
+      {loading ? (
+        <div className="empty-state">
+          <div className="big-icon">
+            ⏳
           </div>
 
-        ))}
+          <h2>
+            Loading Proposals...
+          </h2>
 
-      </div>
+          <p>
+            Please wait while we fetch student proposals.
+          </p>
+        </div>
+      ) : proposals.length === 0 ? (
+
+        /* NO PROPOSALS */
+
+        <div className="empty-state">
+          <div className="big-icon">
+            📩
+          </div>
+
+          <h2>
+            No Proposals Yet
+          </h2>
+
+          <p>
+            Students who apply to your projects will appear here.
+          </p>
+        </div>
+
+      ) : (
+
+        /* PROPOSALS */
+
+        <div className="proposal-list">
+
+          {proposals.map((proposal) => (
+
+            <div
+              className="proposal-card"
+              key={proposal.id}
+            >
+
+              <div className="student-avatar">
+                {proposal.avatar}
+              </div>
 
 
-      {/* VIEW PROPOSAL MODAL */}
+              <div className="proposal-info">
+
+                <h3>
+                  {proposal.name}
+                </h3>
+
+                <p>
+                  {proposal.role} • ⭐ {proposal.rating}
+                </p>
+
+                <p>
+                  {proposal.message}
+                </p>
+
+                <small>
+                  Project: <b>{proposal.project}</b>
+                </small>
+
+                <br />
+
+                <small>
+                  Bid: <b>₹{proposal.budget}</b>
+                </small>
+
+                <br />
+
+                <span
+                  className={`status ${getStatusClass(
+                    proposal.status
+                  )}`}
+                >
+                  {proposal.status === "shortlisted"
+                    ? "Shortlisted"
+                    : proposal.status === "rejected"
+                    ? "Rejected"
+                    : "Pending"}
+                </span>
+
+              </div>
+
+
+              {/* ACTIONS */}
+
+              <div className="proposal-actions">
+
+                <button
+                  className="outline-btn"
+                  onClick={() =>
+                    setSelectedProposal(proposal)
+                  }
+                >
+                  👁 View
+                </button>
+
+                {proposal.status === "pending" && (
+                  <>
+                    <button
+                      className="primary-btn"
+                      onClick={() =>
+                        updateStatus(
+                          proposal.id,
+                          "shortlisted"
+                        )
+                      }
+                    >
+                      ✅ Shortlist
+                    </button>
+
+                    <button
+                      className="small-btn"
+                      onClick={() =>
+                        updateStatus(
+                          proposal.id,
+                          "rejected"
+                        )
+                      }
+                    >
+                      ❌ Reject
+                    </button>
+                  </>
+                )}
+
+                {proposal.status === "shortlisted" && (
+                  <button
+                    className="primary-btn"
+                    disabled
+                  >
+                    Shortlisted ✓
+                  </button>
+                )}
+
+              </div>
+
+            </div>
+
+          ))}
+
+        </div>
+      )}
+
+
+      {/* ================= VIEW MODAL ================= */}
 
       {selectedProposal && (
 
         <div
           className="proposal-modal-overlay"
-          onClick={() => setSelectedProposal(null)}
+          onClick={() =>
+            setSelectedProposal(null)
+          }
         >
 
           <div
             className="proposal-modal"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) =>
+              e.stopPropagation()
+            }
           >
 
             <button
               className="proposal-modal-close"
-              onClick={() => setSelectedProposal(null)}
+              onClick={() =>
+                setSelectedProposal(null)
+              }
             >
               ✕
             </button>
@@ -178,21 +385,30 @@ function Proposals() {
             <div className="proposal-details-grid">
 
               <div>
-                <small>Experience</small>
+                <small>
+                  Experience
+                </small>
+
                 <strong>
                   {selectedProposal.experience}
                 </strong>
               </div>
 
               <div>
-                <small>Budget</small>
+                <small>
+                  Bid Amount
+                </small>
+
                 <strong>
-                  {selectedProposal.budget}
+                  ₹{selectedProposal.budget}
                 </strong>
               </div>
 
               <div>
-                <small>Delivery</small>
+                <small>
+                  Delivery
+                </small>
+
                 <strong>
                   {selectedProposal.delivery}
                 </strong>
@@ -203,7 +419,9 @@ function Proposals() {
 
             <div className="proposal-modal-section">
 
-              <h4>Project</h4>
+              <h4>
+                Project
+              </h4>
 
               <p>
                 {selectedProposal.project}
@@ -214,7 +432,9 @@ function Proposals() {
 
             <div className="proposal-modal-section">
 
-              <h4>Skills</h4>
+              <h4>
+                Skills
+              </h4>
 
               <p>
                 {selectedProposal.skills}
@@ -225,7 +445,9 @@ function Proposals() {
 
             <div className="proposal-modal-section">
 
-              <h4>Proposal</h4>
+              <h4>
+                Proposal
+              </h4>
 
               <p>
                 {selectedProposal.message}
@@ -234,7 +456,7 @@ function Proposals() {
             </div>
 
 
-            {/* ACTIONS */}
+            {/* MODAL ACTIONS */}
 
             <div className="proposal-modal-actions">
 
@@ -247,18 +469,37 @@ function Proposals() {
                 Close
               </button>
 
-              <button
-                className="primary-btn"
-                onClick={() => {
-                  handleHire(selectedProposal.id);
-                  setSelectedProposal(null);
-                }}
-                disabled={hired[selectedProposal.id]}
-              >
-                {hired[selectedProposal.id]
-                  ? "Already Hired ✓"
-                  : "💼 Hire Student"}
-              </button>
+              {selectedProposal.status === "pending" && (
+                <>
+                  <button
+                    className="small-btn"
+                    onClick={() => {
+                      updateStatus(
+                        selectedProposal.id,
+                        "rejected"
+                      );
+
+                      setSelectedProposal(null);
+                    }}
+                  >
+                    ❌ Reject
+                  </button>
+
+                  <button
+                    className="primary-btn"
+                    onClick={() => {
+                      updateStatus(
+                        selectedProposal.id,
+                        "shortlisted"
+                      );
+
+                      setSelectedProposal(null);
+                    }}
+                  >
+                    ✅ Shortlist Student
+                  </button>
+                </>
+              )}
 
             </div>
 
